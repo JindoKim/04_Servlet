@@ -29,7 +29,7 @@ public class SessionServlet extends HttpServlet {
 
         if(session != null) {
             loggedInUser = session.getAttribute("loggedInUser").toString();
-            pwd = session.getAttribute("pwd").toString();
+            pwd = session.getAttribute("userPwd").toString();
         }
 
         // jsp 에서 사용하는 값 담아주기
@@ -42,10 +42,37 @@ public class SessionServlet extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        resp.setContentType("text/html; charset=UTF-8");
+//        resp.setContentType("text/html; charset=UTF-8");
 
+        // 로그인 버튼을 눌렀을 때
+        // ID, PWD 값을 request 객체에서 꺼내 담기
         String userId = req.getParameter("userId");
-        String userPwd = req.getParameter("userPwd");
+        String userPwd = req.getParameter("pwd");
+
+        if(userId != null && !userPwd.isEmpty()) {
+            // 사용자의 아이디와 비밀번호를 저장하기 위한 Session 객체 생성
+            HttpSession session = req.getSession(true);
+            // 동일한 사용자인지를 확인하기 위한 변수 생성.
+            String existUser = (String)session.getAttribute("loggedInUser");
+            //String existUser = session.getAttribute("loggedInUser").toString(); toString() 이 안되는 이유: .toString()은 참조라 null을 참조하려해서 에럼.
+            //(String) 으로 캐스팅하면 참조를 안하고 변환해주기에 에러가 안남.
+
+            if(existUser == null || existUser.equals(userId)) {
+                session.setAttribute("loggedInUser",userId);
+                if(userPwd != null && !userPwd.isEmpty()) {
+                    session.setAttribute("userPwd", userPwd);
+                }
+                session.setMaxInactiveInterval(30); //session 의 유효 기간 설정 30초
+            } else {
+                session.setAttribute("loggedInUser",userId);
+                if(userPwd != null && !userPwd.isEmpty()) {
+                    session.setAttribute("userPwd", userPwd);
+                }
+                session.setMaxInactiveInterval(30); //session 의 유효 기간 설정 30초
+            }
+
+        }
+        doGet(req,resp);
 
     }
 }

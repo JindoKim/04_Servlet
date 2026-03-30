@@ -38,7 +38,7 @@ public class ExceptionServlet extends HttpServlet {
         // 아래 구문은 응답 시에 항상 해줘야 한글이 안 깨진다.
         // 요청 or 응답 할 때마다 항상 해줘야 하는건데
         // 더 쉽게 처리할 수 있는 방법이 있지 않을까?
-        resp.setContentType("text/html; charset=UTF-8"); //필터라고 하는걸로 자동화할 수 있음.
+//        resp.setContentType("text/html; charset=UTF-8"); //필터라고 하는걸로 자동화할 수 있음.
 
         PrintWriter out = resp.getWriter();
         out.print(responseBuilder);
